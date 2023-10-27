@@ -203,6 +203,13 @@ function playIt(path) {
   console.log("playing");
   //var instance = createjs.Sound.createInstance(path);;  // play using id.  Could also use full sourcepath or event.src.
   var instance = createjs.Sound.play(path);
+  console.log(instance);
+  console.log(instance.playState);
+
+  watch(instance, "playState", function(){
+    console.log("playState changed!" + instance.playState);
+  });
+
   instance.on("complete", handleComplete2, this);
   // instance.on("complete", handleComplete, this);
   instance.on("error", function (e) { console.error(e); }, this);
