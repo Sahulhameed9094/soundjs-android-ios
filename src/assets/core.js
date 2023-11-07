@@ -5,6 +5,8 @@ var _audioArray = [];
 var storeImages = [];
 var storeAudio = [];
 
+var queueList = [];
+
 var audioUrls = [
   {
     id: "correct_1",
@@ -200,16 +202,29 @@ function handleFileLoad(event) {
       ctx.drawImage(image, 0, 0, image.width, image.height);
 
       // Get the base64 data URL
-      var base64Data = canvas.toDataURL("image/png");
+      let base64Data = canvas.toDataURL("image/png");
 
-      storeImages.push(base64Data);
+
       // Now you can use the base64Data as needed
       console.log(base64Data);
+
+      // addItemImage(event.item.id, base64Data);
+
+
+      let _imageObj = {};
+      _imageObj.id = event.item.id;
+      _imageObj.image = base64Data
+      storeImages.push(_imageObj);
+
     };
   } else if (event.item.type == createjs.LoadQueue.SOUND) {
+
     //save blob data in sqllite
-    storeAudio.push(event.result);
-    console.log(typeof event.result);
+    let _audioObj = {};
+    _audioObj.id = event.item.id;
+    _audioObj.audio = event.result
+    storeAudio.push(_audioObj);
+    console.log(event.result);
   }
 }
 
@@ -262,9 +277,7 @@ function playIt(path) {
 }
 
 
-document.addEventListener("deviceready", () => {
-  // load();
-});
+
 
 
 function downloadAudioAsBlob() {
@@ -310,3 +323,171 @@ function downloadAudioAsBlob() {
 
 // Example usage
 // downloadAudioAsBlob('https://example.com/audio.mp3');
+
+
+// var db = null;
+// document.addEventListener('deviceready', function () {
+
+//   /*var db = window.sqlitePlugin.openDatabase({
+//     name: 'sahulSqlite.db',
+//     location: 'default',
+//     // createFromLocation: 1
+//   });
+//   db.transaction(function (tx) {
+//     alert('Database created successfully' + tx.name);
+//     // Perform any database operations here    // For example, creating tables or inserting data    tx.executeSql('CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT)');
+//   }, function (error) {
+//     console.error('Transaction error: ', error);
+//   }, function () {
+//     console.log('Transaction success');
+//   }); */
+
+//   var db = window.sqlitePlugin.openDatabase({ name: 'my.db', location: 'default' },
+//     function (db) {
+//       db.transaction(function (tx) {
+//         tx.executeSql('CREATE TABLE customerAccounts (firstname, lastname, acctNo)');
+//       }, function (error) {
+//         console.log('transaction error: ' + error.message);
+//       }, function () {
+//         console.log('transaction ok');
+//       });
+
+//     }, function (error) {
+//       console.log('Open database ERROR: ' + JSON.stringify(error));
+//     });
+
+// });
+
+var db = null;
+document.addEventListener('deviceready', onDeviceReady, false);
+
+function onDeviceReady() {
+
+  db = window.sqlitePlugin.openDatabase({
+    name: 'sahulSqlite.db',
+    location: 'default',
+    createFromLocation: 1
+  });
+
+
+
+  // Perform database operations here
+}
+
+
+
+
+
+
+function addItemAudio(id, audio) {
+  debugger;
+
+  db.transaction(function (tx) {
+    debugger;
+
+    var query = "INSERT INTO storeAudiotbl (audioID,audio) VALUES (?,?)";
+
+    tx.executeSql(query, [id, audio], function (tx, res) {
+      debugger;
+
+      console.log("insertId: " + res.insertId + " -- probably 1");
+      console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
+    }, function (tx, error) {
+      debugger;
+
+      console.log('INSERT error: ' + error.message);
+    });
+  }, function (error) {
+    debugger;
+
+    console.log('transaction error: ' + error.message);
+  }, function () {
+    debugger;
+
+    console.log('transaction ok');
+  });
+}
+
+
+function addItemImage(id, image) {
+  debugger;
+
+  db.transaction(function (tx) {
+    debugger;
+
+    var query = "INSERT INTO storeImagetbl (imageID,image) VALUES (?,?)";
+
+    tx.executeSql(query, [id, image], function (tx, res) {
+      debugger;
+
+      console.log("insertId: " + res.insertId + " -- probably 1");
+      console.log("rowsAffected: " + res.rowsAffected + " -- should be 1");
+    }, function (tx, error) {
+      debugger;
+
+      console.log('INSERT error: ' + error.message);
+    });
+  }, function (error) {
+    debugger;
+
+    console.log('transaction error: ' + error.message);
+  }, function () {
+    debugger;
+
+    console.log('transaction ok');
+  });
+}
+
+
+function createTable() {
+  // Use SQLite plugin to create the table
+  // Create the storetable table
+  db.transaction(function (tx) {
+    tx.executeSql('CREATE TABLE IF NOT EXISTS storeAudiotbl (id INTEGER PRIMARY KEY AUTOINCREMENT,audioID TEXT, audio BLOB)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS storeImagetbl (id INTEGER PRIMARY KEY AUTOINCREMENT,imageID TEXT, image TEXT)');
+  });
+}
+
+function insertData() {
+  // Use SQLite plugin to insert data into the table
+  debugger;
+  storeImages.forEach((x) => {
+    debugger;
+    addItemImage(x.id, x.image)
+  });
+
+}
+
+function insertMusicData() {
+  // Use SQLite plugin to insert data into the table
+  debugger;
+  storeAudio.forEach((x) => {
+    debugger;
+    addItemAudio(x.id, x.audio)
+  });
+
+}
+
+
+function deleteTable() {
+  // Use SQLite plugin to delete the table
+  db.executeSql("DROP TABLE IF EXISTS storeAudiotbl");
+  db.executeSql("DROP TABLE IF EXISTS storeImagetbl");
+
+}
+
+function BindImageData() {
+  var query = "select imageID,image from storeImagetbl";
+
+  db.transaction(function (tr) {
+    tr.executeSql(query, [], function (tr, rs) {
+      console.log('Got upperString result: ' + rs.rows.item);
+      document.getElementById('imageElement').src = rs.rows.item(0).image;
+    });
+  });
+
+
+
+}
+
+
