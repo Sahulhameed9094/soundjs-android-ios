@@ -2,19 +2,30 @@ var soundWrapper = [];
 var soundWrapper2 = [];
 var _audioArray = [];
 
+var storeImages = [];
+var storeAudio = [];
+
 var audioUrls = [
   {
     id: "correct_1",
-    src: "https://qacdn.phonicshero.com/assets/sfx/loading_long.mp3",
+    src: "https://qacdn.phonicshero.com/assets/images/ph/images/baby1.png",
   },
-  // {
-  //   id: "correct_2",
-  //   src: "https://qacdn.phonicshero.com/assets/sfx/loading_long.mp3",
-  // },
-  // {
-  //   id: "correct_3",
-  //   src: "https://qacdn.phonicshero.com/assets/sfx/loading_long.mp3",
-  // },
+  {
+    id: "bled_sentence_snd",
+    src: "https://qalogin.readingdoctor.com/assets/WellDoneNews.mp3",
+  },
+  {
+    id: "bled_snd",
+    src: "https://qalogin.readingdoctor.com/assets/Blending/audio/CCVC/bled_snd.wav",
+  },
+  {
+    id: "ccvc_skid_spr_0",
+    src: "https://qalogin.readingdoctor.com/assets/Blending/mnemonics/CCVC/ccvc_skid_spr_0.png",
+  },
+  {
+    id: "ccvc_skin_spr_0",
+    src: "https://qalogin.readingdoctor.com/assets/Blending/mnemonics/CCVC/ccvc_skin_spr_0.png",
+  },
 ];
 
 function loadaudios() {
@@ -145,7 +156,7 @@ function loading_long() {
 // window.onload(playAudios);
 // document.addEventListener('deviceready', playAudios);
 
-function load() {
+function LoadQueueRD() {
   // Update the UI
   //debugger;
 
@@ -174,11 +185,37 @@ function handleFileLoad(event) {
 
   // Play the loaded sound
   // createjs.Sound.play(event.item.id);
+
+  if (event.item.type === createjs.LoadQueue.IMAGE) {
+    var image = new Image();
+    image.src = event.result.src;
+
+    // // Wait for the image to load
+    image.onload = function () {
+      // Convert the image to a base64 string
+      var canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(image, 0, 0, image.width, image.height);
+
+      // Get the base64 data URL
+      var base64Data = canvas.toDataURL("image/png");
+
+      storeImages.push(base64Data);
+      // Now you can use the base64Data as needed
+      console.log(base64Data);
+    };
+  } else if (event.item.type == createjs.LoadQueue.SOUND) {
+    //save blob data in sqllite
+    storeAudio.push(event.result);
+    console.log(typeof event.result);
+  }
 }
 
 function handleComplete(event) {
   // document.getElementById("display").innerHtml += "<br/>Loading Complete!";
-  alert("audio loaded successfully");
+  console.log("audio loaded successfully");
 }
 function handleComplete2(event) {
   // document.getElementById("display").innerHtml += "<br/>Loading Complete!";
@@ -188,13 +225,13 @@ function handleComplete2(event) {
 function playIt2(path) {
   // debugger;
   console.log("playing timer");
-setTimeout(() => {
-  console.log(" timer ended");
-  var instance = createjs.Sound.play(path);
-  instance.on("complete", handleComplete2, this);
-  instance.on("error", function (e) { console.error(e); }, this);
-}, 1000);
-  
+  setTimeout(() => {
+    console.log(" timer ended");
+    var instance = createjs.Sound.play(path);
+    instance.on("complete", handleComplete2, this);
+    instance.on("error", function (e) { console.error(e); }, this);
+  }, 1000);
+
 
 }
 
@@ -206,7 +243,7 @@ function playIt(path) {
   console.log(instance);
   console.log(instance.playState);
 
-  watch(instance, "playState", function(){
+  watch(instance, "playState", function () {
     console.log("playState changed!" + instance.playState);
   });
 
@@ -226,5 +263,50 @@ function playIt(path) {
 
 
 document.addEventListener("deviceready", () => {
-  load();
+  // load();
 });
+
+
+function downloadAudioAsBlob() {
+  debugger;
+  let audioURL = "https://qalogin.readingdoctor.com/assets/WellDoneNews.mp3";
+  // Create an XMLHttpRequest object
+  var xhr = new XMLHttpRequest();
+
+  // Set the responseType to "blob" to receive binary data
+  xhr.responseType = 'blob';
+
+  // Define a callback for when the request is complete
+  xhr.onload = function () {
+    if (xhr.status === 200) {
+      // The audio data is now in xhr.response as a Blob
+      var audioBlob = xhr.response;
+
+      // Create a URL for the Blob
+      var audioURL = URL.createObjectURL(audioBlob);
+
+      // Create a download link
+      var downloadLink = document.createElement('a');
+      downloadLink.href = audioURL;
+      downloadLink.download = 'audio.mp3'; // Set the desired filename
+      downloadLink.style.display = 'none';
+
+      // Append the link to the document and trigger the download
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+
+      // Clean up by removing the download link and revoking the Blob URL
+      document.body.removeChild(downloadLink);
+      URL.revokeObjectURL(audioURL);
+    }
+  };
+
+  // Open a GET request to the audio source
+  xhr.open('GET', audioURL, true);
+
+  // Send the request
+  xhr.send();
+}
+
+// Example usage
+// downloadAudioAsBlob('https://example.com/audio.mp3');
