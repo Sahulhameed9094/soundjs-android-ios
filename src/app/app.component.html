@@ -2,7 +2,7 @@
     <ion-header [translucent]="true">
         <ion-toolbar>
             <ion-title>
-                Blank
+                Sqlite blob Crud operations
             </ion-title>
         </ion-toolbar>
     </ion-header>
@@ -19,9 +19,9 @@
         <ion-button onclick="downloadAudioAsBlob()" expand="block" fill="clear" shape="round">
             downloadAudioAsBlob
         </ion-button>
-        <ion-button onclick="correct_1_1audio()" expand="block" fill="clear" shape="round">
+        <!-- <ion-button onclick="correct_1_1audio()" expand="block" fill="clear" shape="round">
             correct_1 with audio
-        </ion-button>
+        </ion-button> -->
         <!-- <ion-button onclick="cuckoo_1()" expand="block" fill="clear" shape="round">
             cuckoo_1
         </ion-button>
@@ -35,9 +35,7 @@
         <ion-button onclick="load()" expand="block" fill="clear" shape="round">
             load
         </ion-button>
-        <ion-button onclick="playIt('correct_1')" expand="block" fill="clear" shape="round">
-            playIt
-        </ion-button>
+       
         <ion-button onclick="playIt2('correct_1')" expand="block" fill="clear" shape="round">
             playIt2 with timeout
         </ion-button>
@@ -46,22 +44,53 @@
         </ion-button>-->
         <img id="imageElement" src="" alt="Image">
 
+        <!-- <ion-button onclick="playIt('bled_sentence_snd')" expand="block" fill="clear" shape="round">
+            playIt
+        </ion-button> -->
+
 
 
         <ion-button onclick="createTable()" expand="block" fill="clear" shape="round">
             Create Table
         </ion-button>
-        <ion-button onclick="insertData()" expand="block" fill="clear" shape="round">
+        <!-- <ion-button onclick="insertIMageData()" expand="block" fill="clear" shape="round">
             Insert Data
-        </ion-button>
+        </ion-button> -->
         <ion-button onclick="deleteTable()" expand="block" fill="clear" shape="round">
             Delete Table
         </ion-button>
-        <ion-button onclick="BindImageData()" expand="block" fill="clear" shape="round">
-            BindImageData
-        </ion-button>
+        <!-- <ion-button onclick="FetchImageData()" expand="block" fill="clear" shape="round">
+            FetchImageData
+        </ion-button> -->
         <ion-button onclick="insertMusicData()" expand="block" fill="clear" shape="round">
             insertMusicData
         </ion-button>
+        <ion-button onclick="FetchAudioData()" expand="block" fill="clear" shape="round">
+            FetchAudioData
+        </ion-button>
+
+        <ion-button onclick="LoadfromContainer()" expand="block" fill="clear" shape="round">
+            LoadfromContainer
+        </ion-button>
+
+        <ion-button onclick="playaudio()" expand="block" fill="clear" shape="round">
+            files audio
+        </ion-button>
+        <ion-button onclick="GetlistfromContainer()" expand="block" fill="clear" shape="round">
+            Getlist from Container
+        </ion-button>
+
+        <ion-button onclick="CordovaMediaPlayer();" expand="block" fill="clear" shape="round">
+            Cordova MediaPlayer
+        </ion-button>
+
+
+        <ion-button onclick="fileTransfer1();" expand="block" fill="clear" shape="round">
+            fileTransfer
+        </ion-button>
+
+        <img src="file:///var/mobile/Containers/Data/Application/3C1620EB-0B12-494E-838E-E5184F3ACD4F/Library/NoCloud/bonus_100a_spr_0.png"
+            alt="" srcset="">
+
     </ion-content>
 </ion-app>

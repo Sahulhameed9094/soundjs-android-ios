@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>AudioBuffer Example</title>
+</head>
+
+<body>
+    <button id="playButton">Play Audio</button>
+
+    <script>
+        // Create an AudioContext
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Load audio data (e.g., from an XMLHttpRequest, File API, etc.) into an AudioBuffer
+        function loadAudioFile(url, callback) {
+            const request = new XMLHttpRequest();
+            request.open('GET', url, true);
+            request.responseType = 'arraybuffer';
+
+            request.onload = function () {
+                audioContext.decodeAudioData(request.response, function (buffer) {
+                    callback(buffer);
+                });
+            };
+
+            request.send();
+        }
+
+        // Load an audio file and play it when the button is clicked
+        document.getElementById('playButton').addEventListener('click', function () {
+            loadAudioFile('https://qalogin.readingdoctor.com/assets/WellDoneNews.mp3', function (audioBuffer) {
+                const source = audioContext.createBufferSource();
+                source.buffer = audioBuffer;
+                source.connect(audioContext.destination);
+                source.start();
+            });
+        });
+    </script>
+</body>
+
+</html>
